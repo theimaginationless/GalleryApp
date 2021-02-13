@@ -7,7 +7,7 @@
 
 import UIKit
 
-class GalleryCollectionViewCell: UICollectionViewCell {
+class GalleryCollectionViewCell: UICollectionViewCell, NSCopying {
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var loadingActivityIndicator: UIActivityIndicatorView!
     var photoId: String!
@@ -32,5 +32,13 @@ class GalleryCollectionViewCell: UICollectionViewCell {
             self.imageView.image = nil
             self.loadingActivityIndicator.startAnimating()
         }
+    }
+    
+    func copy(with zone: NSZone? = nil) -> Any {
+        let copy = GalleryCollectionViewCell()
+        copy.imageView = self.imageView
+        copy.loadingActivityIndicator = self.loadingActivityIndicator
+        copy.photoId = photoId
+        return copy
     }
 }

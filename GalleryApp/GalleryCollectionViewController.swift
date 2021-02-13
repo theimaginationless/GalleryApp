@@ -11,6 +11,8 @@ class GalleryCollectionViewController: UICollectionViewController {
     var photoStore: PhotoStore!
     var photoDataSource = PhotoDataSource()
     var refreshControl: UIRefreshControl!
+    var deferredCells = Set<GalleryCollectionViewCell>()
+    let reachability = try! Reachability()
     var currentPage = 0
     
     override func viewDidLoad() {
@@ -21,7 +23,26 @@ class GalleryCollectionViewController: UICollectionViewController {
         refreshControl.addTarget(self, action: #selector(self.forcedReloadAction), for: .valueChanged)
         self.collectionView.refreshControl = refreshControl
         self.initialLoad()
-}
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.processingAllDeferredCells), name: .reachabilityChanged, object: reachability)
+        do {
+            try reachability.startNotifier()
+        }
+        catch {
+            print("could not start reachability notifier")
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        reachability.stopNotifier()
+        NotificationCenter.default.removeObserver(self, name: .reachabilityChanged, object: reachability)
+    }
     
     func initialLoad() {
         self.photoStore.restorePhotosFromLocal {
@@ -68,45 +89,106 @@ class GalleryCollectionViewController: UICollectionViewController {
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-            let photosCount = self.photoDataSource.photos.count
-            if indexPath.row == photosCount - 1 {
-                self.loadMore(indexPath: IndexPath(row: photosCount, section: 0))
-            }
-    
-            let photo = self.photoDataSource.photos[indexPath.row]
-            self.photoStore.fetchImageFor(photo: photo, size: .medium, isPreview: true) {
-                (imageResult) in
-    
-                OperationQueue.main.addOperation {
-                    switch imageResult {
-                    case let .Successful(image):
-                        if let galleryCell = cell as? GalleryCollectionViewCell {
-                            galleryCell.updateWith(image: image, photoId: photo.id)
-                            photo.imagePreview = image
-                            DispatchQueue.global(qos: .background).async {
-                                self.photoStore.fetchImageFor(photo: photo, size: .reserved, isPreview: false) {
-                                    (imageResult) in
-    
-                                    switch imageResult {
-                                    case let .Successful(image):
-                                        photo.image = image
-                                    case let .Failed(error):
-                                        switch error {
-                                        case ImageError.NotFound:
-                                            fallthrough
-                                        default:
-                                            print("\(#function): Error: \(error)")
+        let photosCount = self.photoDataSource.photos.count
+        if indexPath.row == photosCount - 1 {
+            self.loadMore(indexPath: IndexPath(row: photosCount, section: 0))
+        }
+
+        let photo = self.photoDataSource.photos[indexPath.row]
+        self.photoStore.fetchImageFor(photo: photo, size: .medium, isPreview: true) {
+            (imageResult) in
+
+            OperationQueue.main.addOperation {
+                switch imageResult {
+                case let .Successful(image):
+                    if let galleryCell = cell as? GalleryCollectionViewCell {
+                        galleryCell.updateWith(image: image, photoId: photo.id)
+                        photo.imagePreview = image
+                        DispatchQueue.global(qos: .background).async {
+                            self.photoStore.fetchImageFor(photo: photo, size: .original, isPreview: false) {
+                                (imageResult) in
+
+                                switch imageResult {
+                                case let .Successful(image):
+                                    photo.image = image
+                                case let .Failed(error):
+                                    switch error {
+                                    case ImageError.NotFound:
+                                        fallthrough
+                                    default:
+                                        let err = error as NSError
+                                        if err.domain == NSURLErrorDomain {
+                                            self.deferredCells.insert(galleryCell)
                                         }
+                                        
+                                        print("\(#function): Error: \(error)")
                                     }
                                 }
                             }
                         }
-                    case let .Failed(error):
-                        print("\(#function): Error: \(error)")
                     }
+                case let .Failed(error):
+                    let err = error as NSError
+                    if err.domain == NSURLErrorDomain {
+                        self.deferredCells.insert(cell as! GalleryCollectionViewCell)
+                    }
+                    
+                    print("\(#function): Error: \(error)")
                 }
             }
         }
+    }
+    
+    @objc func processingAllDeferredCells() {
+        let deferredArray = self.deferredCells.map{$0.copy()} as! [GalleryCollectionViewCell]
+        self.deferredCells.removeAll()
+        let deferredSet = Set<GalleryCollectionViewCell>(deferredArray)
+        deferredSet.forEach{self.processingDeferredCell(cell: $0)}
+    }
+    
+    func processingDeferredCell(cell: GalleryCollectionViewCell) {
+        let photo = self.photoDataSource.photos.first{$0.id == cell.photoId}!
+        self.photoStore.fetchImageFor(photo: photo, size: .medium, isPreview: true) {
+            (imageResult) in
+
+            OperationQueue.main.addOperation {
+                switch imageResult {
+                case let .Successful(image):
+                    cell.updateWith(image: image, photoId: photo.id)
+                    photo.imagePreview = image
+                    DispatchQueue.global(qos: .background).async {
+                        self.photoStore.fetchImageFor(photo: photo, size: .original, isPreview: false) {
+                            (imageResult) in
+
+                            switch imageResult {
+                            case let .Successful(image):
+                                photo.image = image
+                            case let .Failed(error):
+                                switch error {
+                                case ImageError.NotFound:
+                                    fallthrough
+                                default:
+                                    let err = error as NSError
+                                    if err.domain == NSURLErrorDomain {
+                                        self.deferredCells.insert(cell)
+                                    }
+                                    
+                                    print("\(#function): Error: \(error)")
+                                }
+                            }
+                        }
+                    }
+                case let .Failed(error):
+                    let err = error as NSError
+                    if err.domain == NSURLErrorDomain {
+                        self.deferredCells.insert(cell)
+                    }
+                    
+                    print("\(#function): Error: \(error)")
+                }
+            }
+        }
+    }
     
     func loadMore(indexPath: IndexPath) {
         self.photoStore.fetchRecentPhotos(page: self.currentPage + 1) {
@@ -163,7 +245,7 @@ class GalleryCollectionViewController: UICollectionViewController {
                     switch imageResult {
                     case let .Successful(image):
                         photo.imagePreview = image
-                        self.photoStore.fetchImageFor(photo: photo, size: .reserved, isPreview: false) {
+                        self.photoStore.fetchImageFor(photo: photo, size: .original, isPreview: false) {
                             (imageResult) in
                             
                             switch imageResult {

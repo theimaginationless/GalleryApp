@@ -130,7 +130,7 @@ class PhotoStore {
                     return
                 }
                 
-                self.fetchImageFor(photo: photo, size: .standard, isPreview: isPreview, retry: retry - 1) {
+                self.fetchImageFor(photo: photo, size: .reserved, isPreview: isPreview, retry: retry - 1) {
                     (result) in
                     
                     completion(result)

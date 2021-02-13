@@ -12,6 +12,7 @@
 		B220154625D7A9BC002AABC4 /* Photo+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B220154425D7A9BC002AABC4 /* Photo+CoreDataClass.swift */; };
 		B220154725D7A9BC002AABC4 /* Photo+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = B220154525D7A9BC002AABC4 /* Photo+CoreDataProperties.swift */; };
 		B26AE57025D7AEB100FC23CF /* CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = B26AE56F25D7AEB100FC23CF /* CoreDataStack.swift */; };
+		B28468B525D8227D00DE5509 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28468B425D8227D00DE5509 /* Reachability.swift */; };
 		B28FD63E25D61CFF00A460CD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD63D25D61CFF00A460CD /* AppDelegate.swift */; };
 		B28FD64025D61CFF00A460CD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B28FD63F25D61CFF00A460CD /* SceneDelegate.swift */; };
 		B28FD64525D61CFF00A460CD /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B28FD64325D61CFF00A460CD /* Main.storyboard */; };
@@ -31,6 +32,7 @@
 		B220154425D7A9BC002AABC4 /* Photo+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+CoreDataClass.swift"; sourceTree = "<group>"; };
 		B220154525D7A9BC002AABC4 /* Photo+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		B26AE56F25D7AEB100FC23CF /* CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataStack.swift; sourceTree = "<group>"; };
+		B28468B425D8227D00DE5509 /* Reachability.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Reachability.swift; path = "../../../Downloads/Reachability.swift-master/Sources/Reachability.swift"; sourceTree = "<group>"; };
 		B28FD63A25D61CFF00A460CD /* GalleryApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GalleryApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B28FD63D25D61CFF00A460CD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B28FD63F25D61CFF00A460CD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 				B220154525D7A9BC002AABC4 /* Photo+CoreDataProperties.swift */,
 				B28FD63F25D61CFF00A460CD /* SceneDelegate.swift */,
 				B28FD64325D61CFF00A460CD /* Main.storyboard */,
+				B28468B425D8227D00DE5509 /* Reachability.swift */,
 				B28FD65325D620A100A460CD /* GalleryCollectionViewController.swift */,
 				B220153A25D7A8EB002AABC4 /* GalleryApp.xcdatamodeld */,
 				B28FD65625D620C500A460CD /* GalleryCollectionViewCell.swift */,
@@ -190,6 +193,7 @@
 				B2CA943425D7C5AF00CFCDF9 /* ImageStore.swift in Sources */,
 				B220153C25D7A8EB002AABC4 /* GalleryApp.xcdatamodeld in Sources */,
 				B26AE57025D7AEB100FC23CF /* CoreDataStack.swift in Sources */,
+				B28468B525D8227D00DE5509 /* Reachability.swift in Sources */,
 				B220154725D7A9BC002AABC4 /* Photo+CoreDataProperties.swift in Sources */,
 				B28FD65725D620C500A460CD /* GalleryCollectionViewCell.swift in Sources */,
 				B2C568C925D777F1000E5BD4 /* DetaildPhotoViewController.swift in Sources */,

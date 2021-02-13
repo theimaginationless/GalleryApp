@@ -44,7 +44,7 @@ class DetailPhotoViewController: UIViewController {
             self.setupFor(image: image)
         }
         else {
-            self.photoStore.fetchImageFor(photo: self.photo, size: .reserved, isPreview: false) {
+            self.photoStore.fetchImageFor(photo: self.photo, size: .original, isPreview: false) {
                 (imageResult) in
                 
                 OperationQueue.main.addOperation {
