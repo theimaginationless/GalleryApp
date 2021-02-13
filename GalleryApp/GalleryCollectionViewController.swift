@@ -70,8 +70,7 @@ class GalleryCollectionViewController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
             let photosCount = self.photoDataSource.photos.count
             if indexPath.row == photosCount - 1 {
-                self.currentPage += 1
-                self.loadMore(page: self.currentPage, indexPath: IndexPath(row: photosCount, section: 0))
+                self.loadMore(indexPath: IndexPath(row: photosCount, section: 0))
             }
     
             let photo = self.photoDataSource.photos[indexPath.row]
@@ -109,8 +108,8 @@ class GalleryCollectionViewController: UICollectionViewController {
             }
         }
     
-    func loadMore(page: Int, indexPath: IndexPath) {
-        self.photoStore.fetchRecentPhotos(page: page) {
+    func loadMore(indexPath: IndexPath) {
+        self.photoStore.fetchRecentPhotos(page: self.currentPage + 1) {
             (photosResult) in
             var indexPaths: [IndexPath]?
             OperationQueue.main.addOperation {
@@ -124,11 +123,11 @@ class GalleryCollectionViewController: UICollectionViewController {
                         return newIndexPath
                     }
                     
+                    self.currentPage += 1
                     self.photoDataSource.photos.append(contentsOf: photosArray)
                 default:
                     return
                 }
-                
                 
                 if let unwrappedIndexPath = indexPaths {
                     self.collectionView.insertItems(at: unwrappedIndexPath)

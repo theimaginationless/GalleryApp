@@ -82,7 +82,7 @@ class PhotoStore {
     /// - Parameter photo: photo instance
     /// - Parameter size: size fetching image
     /// - Parameter isPreview: indicate for returns and setting previewImage or image of photo instance
-    func fetchImageFor(photo: Photo, size: ImageSize, isPreview: Bool, retry: Int = 0, completion: @escaping (ImageResult) -> Void) {
+    func fetchImageFor(photo: Photo, size: ImageSize, isPreview: Bool, retry: Int = 1, completion: @escaping (ImageResult) -> Void) {
         let photoId = photo.id
         var image: UIImage?
         if isPreview {
