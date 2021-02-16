@@ -41,11 +41,11 @@ class PhotoStore {
     
     func processRecentPhotosRequest(data: Data?, error: Error?) -> ApiResult {
         guard let jsonData = data,
-              let jsonDict = ImgurAPI.jsonFromData(jsonData: jsonData) else {
+              let jsonDict = FlickrAPI.jsonFromData(jsonData: jsonData) else {
             return .FetchPhotosFailed("Processing error: \(error!)")
         }
                 
-        let result = ImgurAPI.photosFromJson(jsonDict: jsonDict, inContext: self.coreDataStack.mainQueueCtx)
+        let result = FlickrAPI.photosFromJson(jsonDict: jsonDict, inContext: self.coreDataStack.mainQueueCtx)
         
         return result
     }
@@ -54,7 +54,7 @@ class PhotoStore {
     /// - Parameter page: page number
     /// - Parameter limit: limit recent photos
     func fetchRecentPhotos(page: Int, limit: Int = 30, completion: @escaping (ApiResult) -> Void) {
-        ImgurAPI.getRecentPhotos(page: page, limit: limit, inContext: self.coreDataStack.mainQueueCtx) {
+        FlickrAPI.getRecentPhotos(page: page, limit: limit, inContext: self.coreDataStack.mainQueueCtx) {
             (photosResult) in
             
             var result = photosResult
@@ -97,7 +97,7 @@ class PhotoStore {
             return
         }
         
-        ImgurAPI.fetchImageFor(photo: photo, size: size) {
+        FlickrAPI.fetchImageFor(photo: photo, size: size) {
             (data, response, error) in
             
             guard let httpResponse = response as? HTTPURLResponse else {

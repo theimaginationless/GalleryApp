@@ -40,7 +40,7 @@ struct ParamsAPI {
     static let page = "page"
 }
 
-struct ImgurAPI {
+struct FlickrAPI {
     private static let ​A​P​I​K​e​y​ = "38d79f9f5702c3509ef49789a8e3c784"
     private static let baseURL = "https://api.flickr.com/services/rest"
     private static let requestProcessingOperationQueue: OperationQueue = {
