@@ -13,7 +13,7 @@ class GalleryCollectionViewController: UICollectionViewController {
     var refreshControl: UIRefreshControl!
     var deferredCells = Set<GalleryCollectionViewCell>()
     let reachability = try! Reachability()
-    var currentPage = 0
+    var currentPage = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,7 +82,7 @@ class GalleryCollectionViewController: UICollectionViewController {
         self.photoStore.imageStore.resetAllImages()
         self.photoStore.resetLocalPhotos()
         self.collectionView.reloadSections(IndexSet(integer: 0))
-        self.currentPage = 0
+        self.currentPage = 1
         self.forcedReload {
             self.refreshControl.endRefreshing()
         }
